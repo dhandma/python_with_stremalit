@@ -54,13 +54,15 @@ See the assistant respond using retrieved content from the PDF.
 
 📦 Folder Structure that is helpful 
 ```
-.
-├── demo.py            # Main Streamlit app
-├── requirements.txt   # Python dependencies
-|__ chat.py
-|__ my_rag.py
-└── README.md          # You're here!
+      .
+      ├── demo.py            # Main Streamlit app
+      ├── requirements.txt   # Python dependencies
+      |__ chat.py
+      |__ my_rag.py
+      └── README.md          # You're here!
+
 ```
+
 🧠 Tech Stack
 Streamlit: UI and interactivity
 
