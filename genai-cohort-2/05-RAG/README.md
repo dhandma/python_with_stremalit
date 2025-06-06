@@ -1,140 +1,72 @@
-Project Overview: PDF Chatbot Assistant
-This Streamlit application allows users to upload a PDF, which is then embedded using OpenAI embeddings and stored in Qdrant. The user can ask questions about the PDF, and the app will retrieve relevant content from the document and generate contextual answers using OpenAI's GPT model.
+📄 PDF Chatbot Assistant
+This project allows you to upload a PDF file and chat with it using OpenAI's GPT-4.1 model. The PDF content is embedded into a Qdrant vector database and queried intelligently to answer your questions.
 
-🧩 Key Components and Explanation
-✅ 1. Environment Setup
-python
-Copy
-Edit
-from dotenv import load_dotenv
-load_dotenv()
-Loads environment variables (like your OpenAI API key) from a .env file.
+🔧 Features
+Upload PDF files via the UI (max 200MB)
 
-🤖 2. Import Required Libraries
-langchain_qdrant: For vector storage and retrieval
+Content is chunked and indexed using LangChain + Qdrant
 
-langchain_openai: For OpenAI embeddings
+Ask questions related to the uploaded PDF
 
-PyPDFLoader: For loading PDFs into text chunks
+Answers are based on vector similarity context from the document
 
-RecursiveCharacterTextSplitter: For splitting large documents into manageable chunks
+Clean, dark-themed chat interface
 
-openai: For generating responses via GPT-4.1
+🚀 How to Run
+1. Install Dependencies
+   ```
+   pip install -r requirements.txt
+    streamlit
+    langchain
+    qdrant-client
+    langchain-openai
+    openai
+    python-dotenv
+```
+2. Start Qdrant
+Make sure Qdrant is running locally on port 6333. You can use Docker:
+```
+docker run -p 6333:6333 -p 6334:6334 qdrant/qdrant
+```
 
-streamlit: For the UI
+3. Set OpenAI Key
+In demo.py, replace this line with your actual key:
 
-tempfile, os, time: For handling uploads and temporary storage
+```
+os.environ["OPENAI_API_KEY"] = "your-openai-api-key"
+```
+Or set it in your shell:
 
-📄 3. Streamlit Page and Styling
-python
-Copy
-Edit
-st.set_page_config(...)
-Sets up the Streamlit page layout.
+```
+export OPENAI_API_KEY=your-openai-api-key
+```
 
-html
-Copy
-Edit
-<style>
-  .block-container { padding-top: 70px !important; }
-  ...
-</style>
-Adds padding below the Streamlit deploy header and defines message bubble styles.
+4. Run the App using streamlit
+```
+streamlit run demo.py
+```
+💬 Usage
+Upload any PDF using the drag-and-drop uploader in the top-right corner.
 
-📤 4. File Upload and Embedding
-python
-Copy
-Edit
-uploaded_file = st.file_uploader(...)
-Allows the user to upload a PDF file.
+Ask a question in the input bar.
 
-python
-Copy
-Edit
-loader = PyPDFLoader(...)
-splitter = RecursiveCharacterTextSplitter(...)
-splitted_docs = splitter.split_documents(docs)
-Loads and splits the PDF into chunks for embedding.
+See the assistant respond using retrieved content from the PDF.
 
-python
-Copy
-Edit
-QdrantVectorStore.from_documents(...)
-Embeds and stores these chunks in a local Qdrant collection called "vector_learning".
+📦 Folder Structure that is helpful 
+```
+.
+├── demo.py            # Main Streamlit app
+├── requirements.txt   # Python dependencies
+|__ chat.py
+|__ my_rag.py
+└── README.md          # You're here!
+```
+🧠 Tech Stack
+Streamlit: UI and interactivity
 
-📦 5. Vector DB Initialization
-python
-Copy
-Edit
-vector_db = QdrantVectorStore.from_existing_collection(...)
-Tries to connect to an existing Qdrant collection for retrieval.
+LangChain: Document parsing, splitting, embedding
 
-If none is found, the user is prompted to upload a PDF.
+Qdrant: Vector storage and similarity search
 
-💬 6. Chat State Management
-python
-Copy
-Edit
-if "messages" not in st.session_state:
-    st.session_state.messages = []
-Maintains a persistent chat history using Streamlit’s session state.
+OpenAI GPT-4.1: Response generation
 
-💡 7. User Interaction and Rerun Logic
-python
-Copy
-Edit
-user_query = st.chat_input(...)
-Captures user input from the chat bar.
-
-python
-Copy
-Edit
-if user_query:
-    st.session_state.messages.append(...)
-    st.rerun()
-Appends the user query and a temporary "thinking..." message, then reruns the app.
-
-🔍 8. Query Processing and Response Generation
-python
-Copy
-Edit
-search_results = vector_db.similarity_search(...)
-Performs a vector similarity search on the query.
-
-python
-Copy
-Edit
-SYSTEM_PROMPT = f"...{context}..."
-response = client.chat.completions.create(...)
-Builds a system prompt with relevant context and queries OpenAI GPT for a response.
-
-💬 9. Displaying Chat Messages
-python
-Copy
-Edit
-for msg in st.session_state.messages:
-    ...
-Iterates over the chat history and renders messages with proper alignment and styles using embedded HTML and CSS.
-
-✅ Features Summary
-Feature	Description
-📤 PDF Upload	Upload and process a PDF document
-🧠 Vector Embedding	Split and embed PDF using OpenAI Embeddings and Qdrant
-🔎 Similarity Search	Retrieve relevant chunks using vector similarity
-💬 Chat Interface	Ask natural language questions and get contextual answers
-🧾 Page-aware Responses	Assistant refers to PDF content and page numbers in answers
-🎨 Custom Styling	Chat bubbles with distinct user and bot styling
-
-🚀 Run the App Locally
-bash
-Copy
-Edit
-pip install -r requirements.txt
-streamlit run app.py
-Make sure Qdrant is running locally at http://localhost:6333 and .env contains your OpenAI API key.
-
-🛠️ .env File
-env
-Copy
-Edit
-OPENAI_API_KEY=your_openai_key_here
